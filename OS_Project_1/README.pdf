@@ -1,0 +1,14 @@
+Brandon Yau
+
+I designed my program to partition the document into N different child processes.
+I then open a pipe for IPC between parent and child. 
+Once divided my program will enter a for loop of N child processes and create N file descriptors
+each for it's own child processes. I also put all of these child process PID's in an array. I then call a function that forks once the FD are created.
+This helper function is the main target for the child processes as it is where the word count will be written to the pipe.
+After all of the N processes are intialized the parent process enters a while loop that waits for N processes to be done.
+Once a process has succesfully finished the parent process reads from the read end of the pipe and determines the count's from the struct that
+was passed through. In summary, each child process will be able to count the word file all at different parts almost simultaneuously and then 
+once they are done all come together back to the parent process.
+For the crash handling I read the signal returned from the child process and if it isn't a success I locate
+which index it was in the PID array to determine which subdivision of the process failed. After finding that subdivision
+I call the helper function I created earlier to basically restart that certain child process.
